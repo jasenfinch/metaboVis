@@ -1,20 +1,10 @@
-Package: visualiseAnalysis
+Package: metaboVis
 Type: Package
-Title: A shiny application for visualising high resolution FIE-MS analyses
+Title: Tools for visualising metabolomics data
 Version: 0.1.0
 Author: Jasen Finch <jsf9@aber.ac.uk>
 Maintainer: Jasen Finch <jsf9@aber.ac.uk>
-Description: A shiny application for visualising high resolution FIE-MS analyses.
-Imports: DT,
-    FIEmspro,
-    ggplot2,
-    mzAnnotation,
-    plotly,
-    plyr,
-    rcdk,
-    reshape2,
-    shiny,
-    stringr
+Description: A suite of tools for visualising metabolomics data and analysis results
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
