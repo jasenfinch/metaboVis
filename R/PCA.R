@@ -1,7 +1,7 @@
 #' PCA
 #' @importFrom shiny shinyApp fluidPage sidebarPanel mainPanel
 #' @importFrom shiny uiOutput tags fluidRow reactive renderUI
-#' @importFrom shiny selectInput headerPanel
+#' @importFrom shiny selectInput headerPanel downloadButton
 #' @importFrom plotly plotlyOutput renderPlotly ggplotly
 #' @importFrom ggplot2 ggplot aes_string geom_hline geom_vline geom_point
 #' @importFrom ggplot2 xlab ylab theme_bw ggtitle labs scale_shape_manual
@@ -19,7 +19,8 @@ PCA <- function(){
         tags$hr(),
         uiOutput('pcs1'),
         uiOutput('pcs2'),
-        tags$hr()
+        tags$hr(),
+        downloadButton('export',label = 'Export Data')
       ),
       mainPanel(
         fluidRow(
@@ -147,6 +148,16 @@ PCA <- function(){
       output$Loadings <- renderUI({
         plotlyOutput('pcaLoadings')
       })
+
+      output$export <- downloadHandler(
+        filename = function() {
+          'PCA.RData'
+        },
+        content = function(con){
+          pca <- getData()
+          save(pca,file = con)
+        }
+      )
     }
   )
 }
