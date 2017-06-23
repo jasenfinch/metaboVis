@@ -2,7 +2,7 @@
 #' @importFrom shiny shinyApp pageWithSidebar sidebarPanel mainPanel
 #' @importFrom shiny uiOutput tags fluidRow reactive renderUI selectInput
 #' @importFrom plotly plotlyOutput renderPlotly ggplotly
-#' @importFrom ggplot2 ggplot aes geom_hline geom_vline geom_point
+#' @importFrom ggplot2 ggplot aes_string geom_hline geom_vline geom_point
 #' @importFrom ggplot2 xlab ylab theme_bw ggtitle
 #' @export
 
@@ -67,15 +67,14 @@ visPCA <- function(analysis){
         names(vars) <- colnames(pca$rotation)
         vars <- round(vars * 100,2)
         res <- data.frame(X = pca$x[,input$pcaXaxis],Y = pca$x[,input$pcaYaxis],Class = factor(unlist(info[,input$Class])))
-        print(head(res))
-        p <- ggplot(res,aes(x = X,y = Y,colour = Class)) +
+        p <- ggplot(res,aes_string(x = 'X',y = 'Y',colour = 'Class')) +
           geom_hline(yintercept = 0, linetype = 2, colour = 'grey') +
           geom_vline(xintercept = 0, linetype = 2, colour = 'grey') +
           geom_point() +
           xlab(paste(input$pcaXaxis,' (Var: ',vars[input$pcaXaxis],'%)',sep = '')) +
           ylab(paste(input$pcaYaxis,' (Var: ',vars[input$pcaYaxis],'%)',sep = '')) +
           theme_bw()
-        p <- ggplotly(p)
+        ggplotly(p)
       })
 
       output$pcaLoadings <- renderPlotly({
@@ -90,7 +89,7 @@ visPCA <- function(analysis){
           ggtitle('Loadings') +
           xlab(input$pcaXaxis) +
           ylab(input$pcaYaxis)
-        p <- ggplotly(p)
+        ggplotly(p)
       })
     }
   )
