@@ -5,11 +5,11 @@
 #' @importFrom plotly plotlyOutput renderPlotly ggplotly
 #' @importFrom ggplot2 ggplot aes_string geom_hline geom_vline geom_point
 #' @importFrom ggplot2 xlab ylab theme_bw ggtitle labs scale_shape_manual
-#' @importFrom ggplot2 scale_colour_manual
+#' @importFrom ggplot2 scale_colour_manual geom_bar
 #' @importFrom ggthemes scale_colour_ptol ptol_pal
 
 PCA <- function(){
-  options(shiny.sanitize.errors = TRUE)
+  # options(shiny.sanitize.errors = TRUE)
   shinyApp(
     ui = (fluidPage(
       headerPanel('PCA'),
@@ -25,6 +25,10 @@ PCA <- function(){
       mainPanel(
         fluidRow(
           uiOutput('PCA')
+        ),
+        tags$hr(),
+        fluidRow(
+          uiOutput('Vars')
         ),
         tags$hr(),
         fluidRow(
@@ -87,11 +91,11 @@ PCA <- function(){
         vars <- vars/sum(vars)
         names(vars) <- colnames(d$pca$rotation)
         vars <- round(vars * 100,2)
-        res <- data.frame(X = d$pca$x[,input$pcaXaxis],Y = d$pca$x[,input$pcaYaxis],Class = factor(unlist(d$info[,input$Class])))
-        p <- ggplot(res,aes_string(x = 'X',y = 'Y',colour = 'Class',shape = 'Class')) +
+        res <- data.frame(X = d$pca$x[,input$pcaXaxis],Y = d$pca$x[,input$pcaYaxis],Class = factor(unlist(d$info[,input$Class])),d$info)
+        p <- ggplot(res) +
           geom_hline(yintercept = 0, linetype = 2, colour = 'grey') +
           geom_vline(xintercept = 0, linetype = 2, colour = 'grey') +
-          geom_point() +
+          geom_point(aes_string(x = 'X',y = 'Y',colour = 'Class',shape = 'Class')) +
           xlab(paste(input$pcaXaxis,' (Var: ',vars[input$pcaXaxis],'%)',sep = '')) +
           ylab(paste(input$pcaYaxis,' (Var: ',vars[input$pcaYaxis],'%)',sep = '')) +
           theme_bw() +
@@ -133,6 +137,24 @@ PCA <- function(){
       output$PCA <- renderUI({
         if (!(is.null(getData()))) {
           plotlyOutput('pca')
+        }
+      })
+      output$vars <- renderPlotly({
+        d <- getData()
+        s <- d$pca$sdev^2
+        s <- s/sum(s)*100
+        s <- data.frame(PC = 1:length(s), Variance = s)
+        p <- ggplot(s,aes_string(x = 'PC',y = 'Variance')) +
+          geom_bar(stat = 'identity',fill = ptol_pal()(1)) +
+          theme_bw() +
+          ylab('%') +
+          ggtitle('Variance Explained')
+        ggplotly(p)
+      })
+
+      output$Vars <- renderUI({
+        if (!(is.null(getData()))) {
+          plotlyOutput('vars')
         }
       })
 
