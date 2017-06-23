@@ -9,7 +9,7 @@
 #' @importFrom ggthemes scale_colour_ptol ptol_pal
 
 PCA <- function(){
-  # options(shiny.sanitize.errors = TRUE)
+  options(shiny.sanitize.errors = TRUE)
   shinyApp(
     ui = (fluidPage(
       headerPanel('PCA'),
@@ -35,16 +35,20 @@ PCA <- function(){
     ),
     server = function(input, output) {
       getData <- reactive({
-        analysis <- get(input$Object)
-        if (length(analysis@preTreated) > 0) {
-          dat <- analysis@preTreated$Data
-          info <- analysis@preTreated$Info
+        if (is.null(input$Object) | input$Object == '') {
+
         } else {
-          dat <- analysis@rawData$Data
-          info <- analysis@rawData$Info
+          analysis <- get(input$Object)
+          if (length(analysis@preTreated) > 0) {
+            dat <- analysis@preTreated$Data
+            info <- analysis@preTreated$Info
+          } else {
+            dat <- analysis@rawData$Data
+            info <- analysis@rawData$Info
+          }
+          pca <- prcomp(dat,center = T,scale. = T)
+          return(list(dat = dat,info = info,pca = pca))
         }
-        pca <- prcomp(dat,center = T,scale. = T)
-        return(list(dat = dat,info = info,pca = pca))
       })
 
       availObjects <- reactive({
@@ -127,7 +131,9 @@ PCA <- function(){
       })
 
       output$PCA <- renderUI({
-        plotlyOutput('pca')
+        if (!(is.null(getData()))) {
+          plotlyOutput('pca')
+        }
       })
 
       output$pcaLoadings <- renderPlotly({
@@ -146,7 +152,9 @@ PCA <- function(){
       })
 
       output$Loadings <- renderUI({
-        plotlyOutput('pcaLoadings')
+        if (!(is.null(getData()))) {
+          plotlyOutput('pcaLoadings')
+        }
       })
 
       output$export <- downloadHandler(
