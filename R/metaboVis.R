@@ -1,7 +1,11 @@
 #' metaboVis
+#' @examples
+#' \dontrun{
+#' metaboVis('PCA')
+#' }
 #' @export
 
-metaboVis <- function(vis){
-  vis <- get(vis)
-  vis()
+metaboVis <- function(tool){
+  tool <- get(tool)
+  tool()
 }

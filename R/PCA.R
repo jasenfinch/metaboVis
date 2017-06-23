@@ -7,6 +7,7 @@
 #' @importFrom ggplot2 xlab ylab theme_bw ggtitle labs scale_shape_manual
 #' @importFrom ggplot2 scale_colour_manual geom_bar
 #' @importFrom ggthemes scale_colour_ptol ptol_pal
+#' @importFrom stats prcomp
 
 PCA <- function(){
   # options(shiny.sanitize.errors = TRUE)

@@ -4,8 +4,13 @@
 \alias{metaboVis}
 \title{metaboVis}
 \usage{
-metaboVis(vis)
+metaboVis(tool)
 }
 \description{
 metaboVis
+}
+\examples{
+\dontrun{
+metaboVis('PCA')
+}
 }
