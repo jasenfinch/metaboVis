@@ -30,11 +30,11 @@ PCA <- function(){
         ),
         tags$hr(),
         fluidRow(
-          uiOutput('Vars')
+          uiOutput('Loadings')
         ),
         tags$hr(),
         fluidRow(
-          uiOutput('Loadings')
+          uiOutput('Vars')
         )
       )
     )

@@ -30,11 +30,11 @@ LDA <- function(){
                       ),
                       tags$hr(),
                       fluidRow(
-                        uiOutput('Tw')
+                        uiOutput('Loadings')
                       ),
                       tags$hr(),
                       fluidRow(
-                        uiOutput('Loadings')
+                        uiOutput('Tw')
                       )
                     )
     )
