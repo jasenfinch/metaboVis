@@ -1,7 +1,8 @@
 
 #' @importFrom DT renderDataTable dataTableOutput
-#' @importFrom ggplot2 geom_boxplot
-#' @importFrom stringr str_split
+#' @importFrom ggplot2 geom_boxplot guides
+#' @importFrom stringr str_split str_replace_all
+#' @importFrom dplyr bind_cols mutate arrange
 
 featureSelection <- function() {
   shinyApp(
