@@ -2,6 +2,7 @@
 #' @importFrom shiny shinyApp fluidPage sidebarPanel mainPanel
 #' @importFrom shiny uiOutput tags fluidRow reactive renderUI
 #' @importFrom shiny selectInput headerPanel downloadButton
+#' @importFrom shinythemes shinytheme
 #' @importFrom plotly plotlyOutput renderPlotly ggplotly
 #' @importFrom ggplot2 ggplot aes_string geom_hline geom_vline geom_point
 #' @importFrom ggplot2 xlab ylab theme_bw ggtitle labs scale_shape_manual
@@ -11,7 +12,7 @@
 PCA <- function(){
   # options(shiny.sanitize.errors = TRUE)
   shinyApp(
-    ui = (fluidPage(
+    ui = (fluidPage(theme = shinytheme('flatly'),
       headerPanel('PCA'),
       sidebarPanel(
         uiOutput('object'),
@@ -43,6 +44,9 @@ PCA <- function(){
 
         } else {
           analysis <- get(input$Object)
+          if (class(analysis) == 'Workflow') {
+            analysis <- analysis@analysed
+          }
           if (length(analysis@preTreated) > 0) {
             dat <- analysis@preTreated$Data
             info <- analysis@preTreated$Info
@@ -56,7 +60,7 @@ PCA <- function(){
       })
 
       availObjects <- reactive({
-        Filter( function(x) 'Analysis' %in% class( get(x,envir = .GlobalEnv) ), ls(envir = .GlobalEnv) )
+        Filter( function(x) c('Workflow','Analysis') %in% class( get(x,envir = .GlobalEnv) ), ls(envir = .GlobalEnv) )
       })
 
       output$object <- renderUI({
