@@ -64,7 +64,7 @@ classification <- function(){
       })
 
       availObjects <- reactive({
-        ls()[sapply(ls(),function(x){class(get(x,envir = .GlobalEnv))[1]}) %in% c('Workflow','Analysis')]
+        ls(envir = .GlobalEnv)[sapply(ls(envir = .GlobalEnv),function(x){class(get(x,envir = .GlobalEnv))[1]}) %in% c('Workflow','Analysis')]
       })
 
       output$object <- renderUI({
