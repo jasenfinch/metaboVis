@@ -1,0 +1,10 @@
+language: r
+
+sudo: required
+bioc_required: true
+warnings_are_errors: true
+
+notifications:
+    email:
+    on_success: change
+    on_failure: change
