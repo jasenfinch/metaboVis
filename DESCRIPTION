@@ -4,11 +4,20 @@ Title: Tools for visualising metabolomics data
 Version: 0.1.0
 Author: Jasen Finch <jsf9@aber.ac.uk>
 Maintainer: Jasen Finch <jsf9@aber.ac.uk>
-Description: A suite of tools for visualising metabolomics data and analysis results
+Description: A suite of tools for visualising metabolomics data and analysis results.
 Imports: ggplot2,
     ggthemes,
     plotly,
-    shiny
+    shiny,
+    DT,
+    FIEmspro,
+    dplyr,
+    ggdendro,
+    magrittr,
+    shinythemes,
+    stringr,
+    tibble,
+    tidyr
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

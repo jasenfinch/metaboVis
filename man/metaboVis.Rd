@@ -6,6 +6,9 @@
 \usage{
 metaboVis(tool)
 }
+\arguments{
+\item{tool}{A string denoting which visualisation tool to use}
+}
 \description{
 metaboVis
 }
