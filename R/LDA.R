@@ -22,7 +22,15 @@ LDA <- function(){
                       uiOutput('dfs1'),
                       uiOutput('dfs2'),
                       tags$hr(),
-                      downloadButton('export',label = 'Export Data')
+                      downloadButton('export',label = 'Export Data'),
+                      tags$hr(),
+                      tags$button(
+                        id = 'close',
+                        type = "button",
+                        class = "btn action-button",
+                        onclick = "setTimeout(function(){window.close();},500);",  # close browser
+                        "Exit"
+                      )
                     ),
                     mainPanel(
                       fluidRow(
@@ -199,6 +207,10 @@ LDA <- function(){
           save(lda,file = con)
         }
       )
+
+      observe({
+        if (input$close > 0) stopApp()
+      })
     }
   )
 }

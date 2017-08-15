@@ -4,7 +4,7 @@
 #' @importFrom shiny shinyApp fluidPage headerPanel sidebarPanel
 #' @importFrom shiny  uiOutput tags downloadButton mainPanel fluidRow
 #' @importFrom shiny reactive selectInput renderUI downloadHandler
-#' @importFrom shiny plotOutput renderPlot
+#' @importFrom shiny plotOutput renderPlot observe
 #' @importFrom shinythemes shinytheme
 #' @importFrom plotly renderPlotly plotlyOutput ggplotly
 #' @importFrom ggplot2 ggplot aes_string geom_errorbarh geom_point
@@ -20,7 +20,15 @@ classification <- function(){
                       uiOutput('object'),
                       uiOutput('method'),
                       tags$hr(),
-                      downloadButton('export',label = 'Export Data')
+                      downloadButton('export',label = 'Export Data'),
+                      tags$hr(),
+                      tags$button(
+                        id = 'close',
+                        type = "button",
+                        class = "btn action-button",
+                        onclick = "setTimeout(function(){window.close();},500);",  # close browser
+                        "Exit"
+                      )
                     ),
                     mainPanel(
                       fluidRow(
@@ -108,6 +116,11 @@ classification <- function(){
           save(classi,file = con)
         }
       )
+
+      observe({
+        if (input$close > 0) stopApp()
+      })
+
     }
   )
 }

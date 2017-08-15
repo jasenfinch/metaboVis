@@ -151,7 +151,7 @@ featureSelection <- function() {
       )
 
       observe({
-        if (input$close > 0) stopApp()                             # stop shiny
+        if (input$close > 0) stopApp()
       })
 
     }

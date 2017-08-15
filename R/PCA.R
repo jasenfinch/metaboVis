@@ -22,7 +22,15 @@ PCA <- function(){
         uiOutput('pcs1'),
         uiOutput('pcs2'),
         tags$hr(),
-        downloadButton('export',label = 'Export Data')
+        downloadButton('export',label = 'Export Data'),
+        tags$hr(),
+        tags$button(
+          id = 'close',
+          type = "button",
+          class = "btn action-button",
+          onclick = "setTimeout(function(){window.close();},500);",  # close browser
+          "Exit"
+        )
       ),
       mainPanel(
         fluidRow(
@@ -193,6 +201,10 @@ PCA <- function(){
           save(pca,file = con)
         }
       )
+
+      observe({
+        if (input$close > 0) stopApp()
+      })
     }
   )
 }
