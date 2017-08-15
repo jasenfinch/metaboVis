@@ -4,7 +4,7 @@
 \alias{viewSpectrum}
 \title{Shiny app to view}
 \usage{
-viewSpectrum(file = NULL, polarityOrder = NULL)
+viewSpectrum()
 }
 \arguments{
 \item{file}{File path of data file to open}

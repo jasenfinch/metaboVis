@@ -6,12 +6,12 @@
 #' }
 #' @export
 
-metaboVis <- function(tool){
+metaboVis <- function(tool,...){
   tool <- get(tool)
   suppressWarnings(
     suppressMessages(
       capture.output(
-        tool()
+        tool(...)
       )
     )
   )

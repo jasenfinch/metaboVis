@@ -1,14 +1,14 @@
-#' Shiny app to view 
+#' Shiny app to view
 #' @name viewSpectrum
 #' @description A shiny app to view converted MS data files.
 #' @param file File path of data file to open
-#' @param polarityOrder specified only when using mzML files. A numeric vector of the length of the number of polarities present in the file giving the polarity order. 
+#' @param polarityOrder specified only when using mzML files. A numeric vector of the length of the number of polarities present in the file giving the polarity order.
 #' @author Jasen Finch
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # for an mzXML file
 #' viewSpectrum(file=list.files(system.file('mzXML',package='binneR'),full.names = T)[1])
-#' 
+#'
 #' # for an mzML file containing both polarities with negative scanning before positive
 #' viewSpectrum(polarityOrder=c(0,1))
 #' }
@@ -16,14 +16,14 @@
 #' @importFrom shiny tags radioButtons uiOutput numericInput mainPanel plotOutput
 #' @importFrom shiny reactive sidebarPanel renderUI sliderInput fluidRow renderPlot
 #' @importFrom mzR header runInfo
-#' @importFrom ggplot2 ggplot geom_line aes_string theme_bw ggtitle geom_vline xlab 
+#' @importFrom ggplot2 ggplot geom_line aes_string theme_bw ggtitle geom_vline xlab
 #' @importFrom ggplot2 ylab geom_segment geom_text
 
-viewSpectrum <- function(file = NULL, polarityOrder = NULL){
+viewSpectrum <- function(){
   options(shiny.maxRequestSize = 500*1024^2)
   shinyApp(
     ui = fluidPage(
-      
+
       titlePanel("viewSpectrum"),
       sidebarLayout(
         sidebarPanel(if (is.null(file)) {
@@ -48,7 +48,15 @@ viewSpectrum <- function(file = NULL, polarityOrder = NULL){
           tags$b("Spectrum"),
           numericInput("dp","Decimal Places:",0),
           uiOutput("selectScan"),
-          uiOutput("selectSpecRange")
+          uiOutput("selectSpecRange"),
+          tags$hr(),
+          tags$button(
+            id = 'close',
+            type = "button",
+            class = "btn action-button",
+            onclick = "setTimeout(function(){window.close();},500);",  # close browser
+            "Exit"
+          )
         ),
         mainPanel(
           plotOutput('chromatogram.p'),
@@ -58,25 +66,14 @@ viewSpectrum <- function(file = NULL, polarityOrder = NULL){
         )
       )
     ),
-    
+
     server = function(input, output) {
       loadData <- reactive({
-        if (is.null(input$file1)) {
-          return(NULL)
-        }
-      	if (class(input$file1) == 'data.frame') {
-        	aa <- openMSfile(input$file1$datapath)
-      	} else {
-      		aa <- openMSfile(input$file1)
-      	}
+        # if (is.null(input$file1)) {
+        #   return(NULL)
+        # }
+        aa <- openMSfile(input$file1$datapath,backend = 'pwiz')
         headers <- header(aa)
-        if (grepl('.mzML',input$file1)) {
-        	if (!is.null(polarityOrder)) {
-        		headers$polarity <- rep(polarityOrder,(1 * 1/length(polarityOrder)) * length(headers$polarity))
-        	} else {
-        		cat('\nmzML file used, polarityOrder needs to be specified\n')
-        	}
-        }
         headers$retentionTime <- round(headers$retentionTime/60,2)
         head <- lapply(0:1,function(x,ms){return(ms[which(ms$polarity == x),])},ms = headers)
         names(head) <- c('neg','pos')
@@ -178,14 +175,14 @@ viewSpectrum <- function(file = NULL, polarityOrder = NULL){
         # Plot
         chrom.plot <- ggplot(head.neg) + geom_line() + theme_bw() + ggtitle("Negative Mode")
         if (input$chromX == "retentionTime") {
-          chrom.plot <- chrom.plot + 
-            aes_string(x = 'retentionTime') + 
-            xlab("Retention Time (minutes)") + 
+          chrom.plot <- chrom.plot +
+            aes_string(x = 'retentionTime') +
+            xlab("Retention Time (minutes)") +
             geom_vline(xintercept = input$rangeScan[1],colour = "Red") +
             geom_vline(xintercept = input$rangeScan[2],colour = "Red")
         } else {
-          chrom.plot <- chrom.plot + 
-            aes_string(x = 'seqNum') + xlab("Scan Number") + 
+          chrom.plot <- chrom.plot +
+            aes_string(x = 'seqNum') + xlab("Scan Number") +
             geom_vline(xintercept = input$rangeScan[1],colour = "Red") +
             geom_vline(xintercept = input$rangeScan[2],colour = "Red")
         }
@@ -212,14 +209,14 @@ viewSpectrum <- function(file = NULL, polarityOrder = NULL){
         # Plot
         chrom.plot <- ggplot(head.pos) + geom_line() + theme_bw() + ggtitle("Positive Mode")
         if (input$chromX == "retentionTime") {
-          chrom.plot <- chrom.plot + 
-            aes_string(x = 'retentionTime') + 
-            xlab("Retention Time (minutes)") + 
+          chrom.plot <- chrom.plot +
+            aes_string(x = 'retentionTime') +
+            xlab("Retention Time (minutes)") +
             geom_vline(xintercept = input$rangeScan[1],colour = "Red") +
             geom_vline(xintercept = input$rangeScan[2],colour = "Red")
         } else {
-          chrom.plot <- chrom.plot + 
-            aes_string(x = 'seqNum') + xlab("Scan Number") + 
+          chrom.plot <- chrom.plot +
+            aes_string(x = 'seqNum') + xlab("Scan Number") +
             geom_vline(xintercept = input$rangeScan[1],colour = "Red") +
             geom_vline(xintercept = input$rangeScan[2],colour = "Red")
         }
@@ -253,11 +250,11 @@ viewSpectrum <- function(file = NULL, polarityOrder = NULL){
         }
         labels <- data.frame(scan[which(scan[,2] == max(scan[,2])),])
         # Plot
-        ggplot(scan,aes_string(x = 'mz',y = 0,xend = 'mz',yend = 'intensity')) + 
-          geom_segment() + 
+        ggplot(scan,aes_string(x = 'mz',y = 0,xend = 'mz',yend = 'intensity')) +
+          geom_segment() +
           geom_text(data = labels,aes_string(x = 'mz',y = 'intensity',label = 'mz'),hjust = 0) +
-          theme_bw() + 
-          xlab("m/z") + 
+          theme_bw() +
+          xlab("m/z") +
           ylab("Intensity")
       })
       output$spectrum.p <- renderPlot({
@@ -283,14 +280,18 @@ viewSpectrum <- function(file = NULL, polarityOrder = NULL){
         }
         labels <- data.frame(scan[which(scan[,2] == max(scan[,2])),])
         # Plot
-        ggplot(scan,aes_string(x = 'mz',y = 0,xend = 'mz',yend = 'intensity')) + 
-          geom_segment() + 
+        ggplot(scan,aes_string(x = 'mz',y = 0,xend = 'mz',yend = 'intensity')) +
+          geom_segment() +
           geom_text(data = labels,aes_string(x = 'mz',y = 'intensity',label = 'mz'),hjust = 0) +
-          theme_bw() + 
-          xlab("m/z") + 
+          theme_bw() +
+          xlab("m/z") +
           ylab("Intensity")
       })
-      
+
+      observe({
+        if (input$close > 0) stopApp()
+      })
+
     }
   )
 }
