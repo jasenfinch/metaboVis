@@ -3,6 +3,7 @@
 #' @importFrom ggplot2 geom_boxplot guides
 #' @importFrom stringr str_split str_replace_all
 #' @importFrom dplyr bind_cols mutate arrange
+#' @importFrom shiny stopApp
 
 featureSelection <- function() {
   shinyApp(
@@ -13,7 +14,15 @@ featureSelection <- function() {
                       uiOutput('method'),
                       uiOutput('pairwise'),
                       tags$hr(),
-                      downloadButton('export',label = 'Export Data')
+                      downloadButton('export',label = 'Export Data'),
+                      tags$hr(),
+                      tags$button(
+                        id = 'close',
+                        type = "button",
+                        class = "btn action-button",
+                        onclick = "setTimeout(function(){window.close();},500);",  # close browser
+                        "Exit"
+                      )
                     ),
                     mainPanel(
                       fluidRow(
@@ -38,12 +47,6 @@ featureSelection <- function() {
             analysis <- analysis@analysed
           }
           feat <- analysis@featureSelection
-          feat <- lapply(feat,function(x){
-            x <- bind_cols(Feature = rownames(x),x)
-            return(x)
-          })
-          feat <- bind_rows(feat,.id = 'Method')
-          feat <- gather(feat,'Pairwise','Score',-(Method:Feature))
           return(feat)
         }
       })
@@ -77,14 +80,14 @@ featureSelection <- function() {
       output$plot <- renderPlotly({
         p <- getData() %>%
           filter(Method == input$Method,Pairwise == input$Pairwise) %>%
-          mutate(Mode = substr(Feature,1,1), `m/z` = as.numeric(str_replace_all(Feature,'[:alpha:]','')), Score = -log10(Score)) %>%
+          mutate(Mode = substr(Feature,1,1), `m/z` = as.numeric(str_replace_all(sapply(str_split(Feature,' '),function(x){x[1]}),'[:alpha:]','')), Score = -log10(Score)) %>%
           ggplot(aes_string(x = '`m/z`', y = 'Score', colour = 'Mode')) +
           geom_point() +
           scale_colour_ptol() +
           theme_bw() +
           facet_wrap(~Mode) +
           guides(colour = F) +
-          ylab('-log10(P)')
+          ylab('-log10(Score)')
 
         ggplotly(p)
       })
@@ -146,6 +149,10 @@ featureSelection <- function() {
           save(feat,file = con)
         }
       )
+
+      observe({
+        if (input$close > 0) stopApp()                             # stop shiny
+      })
 
     }
   )
