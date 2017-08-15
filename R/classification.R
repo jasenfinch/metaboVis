@@ -42,20 +42,7 @@ classification <- function(){
           if (class(analysis) == 'Workflow') {
             analysis <- analysis@analysed
           }
-          classi <- analysis@classification
-
-          classi <- lapply(classi,function(y){
-            y <- lapply(y,function(z){
-              z <- bind_rows(list(Accuracy = z$acc.iter,AUC = z$auc.iter,Margin = z$mar.iter), .id = 'Iteration')
-              z$Iteration <- 1:nrow(z)
-              z <- gather(z,'Measure','Value',-Iteration)
-              return(z)
-            })
-            y <- bind_rows(y,.id = 'Method')
-            return(y)
-          })
-
-          classi <- bind_rows(classi,.id = 'Pairwise') %>%
+          classi <- analysis@classification %>%
             group_by(Pairwise,Method,Measure) %>%
             summarise(Mean = mean(Value), SD = sd(Value))
 
@@ -82,7 +69,6 @@ classification <- function(){
 
       output$plot <- renderPlotly({
         res <- getData()
-        print(head(res))
         res <- res[res$Method == input$Method,]
         p <- ggplot(res,aes_string(x = 'Mean',y = 'Pairwise',xmin = 'Mean - SD',xmax = 'Mean + SD')) +
           geom_errorbarh(colour = '#3399FF',height = 0.3) +

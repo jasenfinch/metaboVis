@@ -8,5 +8,11 @@
 
 metaboVis <- function(tool){
   tool <- get(tool)
-  tool()
+  suppressWarnings(
+    suppressMessages(
+      capture.output(
+        tool()
+      )
+    )
+  )
 }
