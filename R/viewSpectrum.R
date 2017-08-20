@@ -1,17 +1,3 @@
-#' Shiny app to view
-#' @name viewSpectrum
-#' @description A shiny app to view converted MS data files.
-#' @param file File path of data file to open
-#' @param polarityOrder specified only when using mzML files. A numeric vector of the length of the number of polarities present in the file giving the polarity order.
-#' @author Jasen Finch
-#' @examples
-#' \dontrun{
-#' # for an mzXML file
-#' viewSpectrum(file=list.files(system.file('mzXML',package='binneR'),full.names = T)[1])
-#'
-#' # for an mzML file containing both polarities with negative scanning before positive
-#' viewSpectrum(polarityOrder=c(0,1))
-#' }
 #' @importFrom shiny shinyApp fluidPage titlePanel sidebarLayout fileInput textInput
 #' @importFrom shiny tags radioButtons uiOutput numericInput mainPanel plotOutput
 #' @importFrom shiny reactive sidebarPanel renderUI sliderInput fluidRow renderPlot

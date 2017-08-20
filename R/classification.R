@@ -11,6 +11,7 @@
 #' @importFrom ggplot2 theme_bw facet_wrap theme element_text
 #' @importFrom magrittr %>%
 #' @importFrom ggdendro ggdendrogram
+#' @importFrom stats hclust as.dist sd
 
 classification <- function(){
   shinyApp(

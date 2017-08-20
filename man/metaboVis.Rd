@@ -8,6 +8,8 @@ metaboVis(tool, ...)
 }
 \arguments{
 \item{tool}{A string denoting which visualisation tool to use}
+
+\item{...}{Parameters to be passed on to selected tool}
 }
 \description{
 metaboVis
