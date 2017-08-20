@@ -5,6 +5,11 @@ cache: packages
 bioc_required: true
 warnings_are_errors: true
 
+apt_packages:
+ - libnetcdf-dev
+ - udunits-bin
+ - libudunits2-dev
+
 r_github_packages:
     - wilsontom/FIEmspro
 
