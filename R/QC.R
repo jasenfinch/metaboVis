@@ -1,3 +1,5 @@
+#' @importFrom reshape2 melt
+
  QC <- function(){
   shinyApp(
     ui = (
@@ -15,7 +17,13 @@
             "Exit"
           )
         ),
-        mainPanel()
+        mainPanel(
+          fluidRow(
+            uiOutput('orders'),
+            uiOutput('classes'),
+            uiOutput('TIC')
+          )
+        )
       )
     ),
     server = function(input,output) {
@@ -25,17 +33,11 @@
         } else {
           analysis <- get(input$Object)
           if (class(analysis) == 'Workflow') {
-            analysis <- analysis@analysed
+            analysis <- analysis@processed
           }
-          if (length(analysis@preTreated) > 0) {
-            dat <- analysis@preTreated$Data
-            info <- analysis@preTreated$Info
-          } else {
-            dat <- analysis@rawData$Data
-            info <- analysis@rawData$Info
-          }
-          pca <- prcomp(dat,center = T,scale. = T)
-          return(list(dat = dat,info = info,pca = pca))
+            dat <- analysis@binnedData
+            info <- analysis@info
+          return(list(dat = dat,info = info))
         }
       })
 
@@ -46,6 +48,50 @@
       output$object <- renderUI({
         selectInput('Object','Object',availObjects())
       })
+
+      availOrders <- reactive({
+        d <- getData()
+        cols <- map(d$info,class)
+        colnames(d$info)[cols == 'integer']
+      })
+
+      output$orders <- renderUI({
+        selectInput('Order','Order',availOrders())
+      })
+
+      availClasses <- reactive({
+        d <- getData()
+        rev(colnames(d$info))
+      })
+
+      output$classes <- renderUI({
+        selectInput('Class','Class',availClasses())
+      })
+
+      output$TIC <- renderUI({
+        if (!(is.null(getData()))) {
+          plotlyOutput('tic')
+        }
+      })
+
+      output$tic <- renderPlotly({
+        d <- getData()
+        info <- d$info
+        dat <- d$dat %>%
+          map(rowSums) %>%
+          bind_cols() %>%
+          bind_cols(info[,input$Order],info[,input$Class]) %>%
+          melt(id.vars = c(input$Order,input$Class),measure.vars = c('n','p'),variable.name = 'Mode',value.name = 'TIC')
+
+        p <- ggplot(dat,aes_string(x = input$Order, y = 'TIC', colour = input$Class)) +
+          geom_point() +
+          facet_wrap(~Mode) +
+          theme_bw()
+
+        ggplotly(p)
+      })
+
+
 
       observe({
         if (input$close > 0) stopApp()
