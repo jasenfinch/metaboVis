@@ -2,6 +2,7 @@
 #' @importFrom shiny column
 #' @importFrom metabolyseR analysisParameters metabolyse preTreatedData
 #' @importFrom ggplot2 geom_histogram
+#' @importFrom stats median
 
 QC <- function(){
   shinyApp(
