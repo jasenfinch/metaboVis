@@ -20,7 +20,8 @@ Imports: ggplot2,
     tidyr,
     mzR,
     purrr,
-    reshape2
+    reshape2,
+    metabolyseR
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
